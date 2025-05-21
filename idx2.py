@@ -65,11 +65,11 @@ def send_to_telegram(message):
     
     # 如果环境变量中没有找到，使用默认值（作为备选）
     if not bot_token:
-        bot_token = '1834872183:AAGt1glfQhItvU04PSeFUzoPpT5jOG8WqC4'
+        bot_token = ''
         log_message("未在环境变量中找到TG_TOKEN，使用默认值")
     
     if not chat_id:
-        chat_id = '1690909053'
+        chat_id = ''
         log_message("未在环境变量中找到TG_CHAT_ID，使用默认值")
     
     if not bot_token or not chat_id:
