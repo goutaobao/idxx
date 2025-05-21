@@ -48,7 +48,7 @@ jobs:
         TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }} # 假设你的 secret 名称是 TG_CHAT_ID
         # 如果你的脚本中 APP_URL 是通过环境变量获取的，也可以在这里设置
         # APP_URL: https://idx.google.com
-      run: python idx.py # 运行你的 Python 脚本
+      run: python idx2.py # 运行你的 Python 脚本
 
     - name: Commit and push if cookie.json changed
       run: |
