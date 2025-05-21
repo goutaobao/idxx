@@ -1,9 +1,9 @@
 name: Auto Shell Keep Alive
 
-#on:
-#  schedule:
-#    - cron: '0,30 * * * *'  # 每半时执行一次
-#  workflow_dispatch:
+on:
+  schedule:
+    - cron: '0,30 * * * *'  # 每半时执行一次
+  workflow_dispatch:
 
 jobs:
   keep-alive:
