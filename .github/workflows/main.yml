@@ -2,45 +2,86 @@ name: Auto Shell Keep Alive
 
 on:
   schedule:
-    - cron: '0,30 * * * *'  # 每半时执行一次
-  workflow_dispatch:
+    - cron: '0,30 * * * *'  # 每半时执行一次 (UTC 时间)
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   keep-alive:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 运行器
     permissions:
-      contents: write
+      contents: write # 授予写入权限，以便可以提交 cookie.json
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4 # 更新到 v4 版本
       with:
-        persist-credentials: true
+        persist-credentials: true # 允许后续的 git push 操作
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5 # 更新到 v5 版本
       with:
-        python-version: '3.x'
+        python-version: '3.9' # 建议指定一个具体的 Python 版本，例如 '3.9' 或 '3.10'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install playwright
-        pip install asyncio
-        pip install requests
-        pip install python-dotenv
-        playwright install chromium
+        pip install playwright requests python-dotenv # 移除了 asyncio，因为它不需要安装
+
+    - name: Install Playwright browsers
+      run: playwright install --with-deps chromium # 添加 --with-deps 以确保安装所有必要的系统依赖
+
+    - name: Create empty cookie.json if not exists
+      run: |
+        # 检查 cookie.json 是否存在，如果不存在则创建一个空的 JSON 文件
+        if [ ! -f cookie.json ]; then
+          echo '{"cookies": [], "origins": []}' > cookie.json
+          echo "Created an empty cookie.json file."
+        else
+          echo "cookie.json already exists."
+        fi
+      # 这个步骤确保了 idx.py 脚本在尝试加载 cookie 时不会因为文件不存在而失败
 
     - name: Run script
       env:
-        TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-      run: python idx.py
+        # 从 GitHub Secrets 获取 Telegram Token 和 Chat ID
+        TG_TOKEN: ${{ secrets.TG_TOKEN }} # 假设你的 secret 名称是 TG_TOKEN
+        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }} # 假设你的 secret 名称是 TG_CHAT_ID
+        # 如果你的脚本中 APP_URL 是通过环境变量获取的，也可以在这里设置
+        # APP_URL: https://idx.google.com
+      run: python idx.py # 运行你的 Python 脚本
 
-    - name: Commit and push if changed
+    - name: Commit and push if cookie.json changed
       run: |
+        # 配置 Git 用户信息，用于提交
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+        # 将 cookie.json 添加到暂存区
         git add cookie.json
-        git diff --quiet && git diff --staged --quiet || git commit -m "Update cookie.json"
-        git push
+        
+        # 检查是否有实际的更改，如果有则提交
+        # git diff --quiet 检查工作区和索引区是否有差异
+        # git diff --staged --quiet 检查索引区和 HEAD 之间是否有差异
+        # || 表示如果前面的命令失败（即有差异），则执行后面的 git commit
+        if ! git diff --quiet --exit-code cookie.json; then
+          git commit -m "Update cookie.json via IDX Login Automation"
+          git push
+          echo "cookie.json updated and pushed."
+        else
+          echo "No changes detected in cookie.json. Skipping commit."
+        fi
+      # 优化了提交逻辑，只在 cookie.json 实际发生变化时才提交和推送
+      # 使用 --exit-code 确保 diff 命令在有差异时返回非零状态码
+      # 这样可以避免不必要的空提交
+
+    - name: Upload Logs and Screenshots (Optional)
+      if: always() # 无论脚本成功或失败，都上传日志和截图
+      uses: actions/upload-artifact@v4 # 更新到 v4 版本
+      with:
+        name: automation-run-artifacts
+        path: |
+          *.log
+          *.txt
+          *.png
+          # 根据你的 idx.py 脚本实际生成的日志文件、文本文件和截图文件命名习惯调整路径
+          # 例如，如果 idx.py 生成了 terms_dialog_attempt_1.png，它就会被上传
