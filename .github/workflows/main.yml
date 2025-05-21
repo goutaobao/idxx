@@ -2,7 +2,7 @@ name: Auto Shell Keep Alive
 
 on:
   schedule:
-    - cron: '0,30 * * * *'  # 每半时执行一次 (UTC 时间)
+    - cron: '0,20,40 * * * *'  # 每 20 分钟执行一次 (UTC 时间)
   workflow_dispatch: # 允许手动触发
 
 jobs:
