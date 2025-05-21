@@ -39,16 +39,17 @@ jobs:
         else
           echo "cookie.json already exists."
         fi
-      # 这个步骤确保了 idx.py 脚本在尝试加载 cookie 时不会因为文件不存在而失败
+      # 这个步骤确保了 idx2.py 脚本在尝试加载 cookie 时不会因为文件不存在而失败
 
     - name: Run script
       env:
         # 从 GitHub Secrets 获取 Telegram Token 和 Chat ID
-        TG_TOKEN: ${{ secrets.TG_TOKEN }} # 假设你的 secret 名称是 TG_TOKEN
-        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }} # 假设你的 secret 名称是 TG_CHAT_ID
+        # 确保你的 GitHub Secrets 名称与此一致 (TG_TOKEN, TG_CHAT_ID)
+        TG_TOKEN: ${{ secrets.TG_TOKEN }}
+        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         # 如果你的脚本中 APP_URL 是通过环境变量获取的，也可以在这里设置
         # APP_URL: https://idx.google.com
-      run: python idx2.py # 运行你的 Python 脚本
+      run: python idx2.py # *** 假设你的脚本名为 idx2.py，请根据实际文件名修改 ***
 
     - name: Commit and push if cookie.json changed
       run: |
@@ -60,9 +61,7 @@ jobs:
         git add cookie.json
         
         # 检查是否有实际的更改，如果有则提交
-        # git diff --quiet 检查工作区和索引区是否有差异
-        # git diff --staged --quiet 检查索引区和 HEAD 之间是否有差异
-        # || 表示如果前面的命令失败（即有差异），则执行后面的 git commit
+        # git diff --quiet --exit-code cookie.json 检查 cookie.json 是否有未提交的更改
         if ! git diff --quiet --exit-code cookie.json; then
           git commit -m "Update cookie.json via IDX Login Automation"
           git push
@@ -71,8 +70,6 @@ jobs:
           echo "No changes detected in cookie.json. Skipping commit."
         fi
       # 优化了提交逻辑，只在 cookie.json 实际发生变化时才提交和推送
-      # 使用 --exit-code 确保 diff 命令在有差异时返回非零状态码
-      # 这样可以避免不必要的空提交
 
     - name: Upload Logs and Screenshots (Optional)
       if: always() # 无论脚本成功或失败，都上传日志和截图
@@ -83,5 +80,5 @@ jobs:
           *.log
           *.txt
           *.png
-          # 根据你的 idx.py 脚本实际生成的日志文件、文本文件和截图文件命名习惯调整路径
-          # 例如，如果 idx.py 生成了 terms_dialog_attempt_1.png，它就会被上传
+          # 根据你的 idx2.py 脚本实际生成的日志文件、文本文件和截图文件命名习惯调整路径
+          # 例如，如果 idx2.py 生成了 terms_dialog_attempt_1.png，它就会被上传
