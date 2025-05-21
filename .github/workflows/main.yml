@@ -1,8 +1,8 @@
 name: IDX Login Automation
 
 on:
-  workflow_dispatch: # 允许手动触发
-  schedule:
+  workflow_dispatch: # 允许手动触发，注意这里和 on: 的缩进级别相同
+  schedule:        # 注意这里和 on: 的缩进级别相同
     - cron: '0 * * * *'  # 每小时的 0 分执行
     - cron: '30 * * * *' # 每小时的 30 分执行
 
