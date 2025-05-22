@@ -170,7 +170,7 @@ def check_page_status_with_requests():
     """使用预设的JWT和URL值直接检查工作站的访问状态"""
     try:
         # 预设值
-        preset_jwt = 'eyJhIjoiOGU1YzU5MDRmNjU3ODcwOWQ5MzM1NDk4YzFjZTQ1MTIiLCJ0IjoiMGEwNzRmYjctZWEwOC00MTk0LWIyZjUtOWMwYTcxZWI2OGNlIiwicyI6IlpXVTJNVFpoWlRRdE1tVmxNeTAwTVdSakxXSm1ZbVF0WVRZeE5tRTFOR0kzTnpRMiJ9'
+        preset_jwt = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UteHh4LTE3NDY2MDg2NDA0MTEuY2x1c3Rlci1wYjRsamhsbWc1aHFzeG56cGM1NnIzcHJ4dy5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NDc4Mzk0NzYsImV4cCI6MTc0NzkyNTg3Nn0.qIO9eMxITVL31y8-PJc4lyVXNYVXolW0XnL-mfdeDvM2kjiXYeFXugCQyoA1ph5KIivwyyH1ithPX-IJMgd3YDptTYDevVM8HVufx31C-8Ex_zTQDmmWKgYjdJtOoIGcVPvtf3yTG9jQ_DcHcQ57l6TUqmkZKWwKGd1b4BKbRQ7fj7_7uL1ZFIKQSTbxbPc7eGKNvcIobOzT38Pd43sb38YJko4TvGr9WnuJpcxaKV2vB6q7zK-AXPmeI01TkBaGHO0dBdxunqWsuQ6l-l-p5iqsqEj3IXY74pKzaUU8ynB_Xb4Uni34sQTeYKuhQqLLV652GbxlFjobAR3hFK7YvA'
         preset_url = 'https://9000-firebase-xxx-1746608640411.cluster-pb4ljhlmg5hqsxnzpc56r3prxw.cloudworkstations.dev/'
 
         # 优先查找cookie.json中匹配的9000-firebase-xxx域名和JWT
